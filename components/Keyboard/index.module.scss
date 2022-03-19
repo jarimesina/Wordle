@@ -1,0 +1,10 @@
+.keyboard {
+  margin: 0px 8px;
+  width: 484px;
+}
+
+.keyboard__row {
+  display: flex;
+  // column-gap: 6px;
+  margin-bottom: 8px;
+}

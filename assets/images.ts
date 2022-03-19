@@ -1,0 +1,1 @@
+export const BackSpace = require('./images/backspace.svg');

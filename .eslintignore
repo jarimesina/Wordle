@@ -1,0 +1,5 @@
+**/node_modules/*
+**/.next/*
+**/coverage/*
+coverage/*
+coverage/lcov-report/index.html
