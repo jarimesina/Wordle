@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import styles from './index.module.scss';
 
-type State = 'default' | 'correct' | 'absent' | 'present';
+export type State = 'default' | 'correct' | 'absent' | 'present';
 
 interface Props {
   state?: State;
@@ -11,6 +11,7 @@ interface Props {
 
 const Tile = ({ character = '', state = 'default', ...otherProps }: Props) => {
   return (
+    // TODO: add state for tiles as a row if active, passed, not yet passed
     <div className={clsx(styles.tile, styles[`mod__${state}`])} {...otherProps}>
       {character}
     </div>
