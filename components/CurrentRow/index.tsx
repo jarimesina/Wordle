@@ -8,7 +8,6 @@ interface Props {
 const CurrentRow = ({guess}:Props) => {
   const splitGuess = guess.split("");
 
-  console.log(splitGuess);
   return (
     <div className={styles.currentRow}>
       {guess.split("").map((letter, i) => (
