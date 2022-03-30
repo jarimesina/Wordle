@@ -14,31 +14,37 @@
   user-select: none;
 
   background: white;
-  border: 2px solid #878a8c;
+  border: 2px solid #d3d6da;
 
   &.mod__default {
-    color: red;
+    color: black;
   }
 
-  // &.mod__present {
-  //   // transition: background-color 1s color 1s;
-  //   border: 2px solid #c9b458;
-  //   background: #c9b458;
-  //   color: white;
-  // }
+  &.mod__tileShake {
+    animation: jiggle linear;
+    animation-duration: 250ms;
+  }
 
-  // &.mod__correct {
-  //   // transition: background-color 1s color 1s;
-  //   border: 2px solid #6aaa64;
+  &.mod__characterAdd {
+    border: 2px solid #878a8c;
+    animation: onTypeCell linear;
+    animation-duration: 0.2s;
+  }
 
-  //   background: #6aaa64;
-  //   color: white;
-  // }
+  &.mod__present {
+    border: 2px solid #c9b458;
+    background: #c9b458;
+    color: white;
+  }
+
+  &.mod__correct {
+    border: 2px solid #6aaa64;
+    background: #6aaa64;
+    color: white;
+  }
 
   &.mod__absent {
-    // transition: background-color 1s ease-in color 1s ease-in;
     border: 2px solid #787c7e;
-
     background: #787c7e;
     color: white;
   }
@@ -48,8 +54,21 @@
     animation-timing-function: linear;
     animation-fill-mode: backwards;
 
+    & > * {
+      animation: offsetLetterFlip 0.35s linear;
+      animation-fill-mode: backwards;
+    }
+
     &.absent {
       animation-name: revealAbsentCharCell;
+    }
+
+    &.correct {
+      animation-name: revealCorrectCharCell;
+    }
+
+    &.present {
+      animation-name: revealPresentCharCell;
     }
   }
 }
@@ -59,17 +78,100 @@
     transform: rotateX(0deg);
     background: white;
     border: 2px solid #878a8c;
-    color: red;
+    color: black;
   }
   50% {
     background: white;
     border: 2px solid #878a8c;
-    color: red;
+    color: black;
   }
   50.1% {
     border: 2px solid #787c7e;
     background: #787c7e;
     color: white;
+  }
+  100% {
+    transform: rotateX(180deg);
+  }
+}
+
+@keyframes revealCorrectCharCell {
+  0% {
+    background: white;
+    border: 2px solid #878a8c;
+    color: black;
+  }
+  50% {
+    background: white;
+    border: 2px solid #878a8c;
+    color: black;
+  }
+  50.1% {
+    border: 2px solid #6aaa64;
+    background: #6aaa64;
+    color: white;
+  }
+  100% {
+    transform: rotateX(180deg);
+  }
+}
+
+@keyframes revealPresentCharCell {
+  0% {
+    background: white;
+    border: 2px solid #878a8c;
+    color: black;
+  }
+  50% {
+    background: white;
+    border: 2px solid #878a8c;
+    color: black;
+  }
+  50.1% {
+    border: 2px solid #c9b458;
+    background: #c9b458;
+    color: white;
+  }
+  100% {
+    transform: rotateX(180deg);
+  }
+}
+
+@keyframes onTypeCell {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes jiggle {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-0.5rem, 0);
+  }
+  50% {
+    transform: translate(0.5rem, 0);
+  }
+  75% {
+    transform: translate(-0.5rem, 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes offsetLetterFlip {
+  0% {
+    transform: rotateX(0deg);
   }
   100% {
     transform: rotateX(180deg);
