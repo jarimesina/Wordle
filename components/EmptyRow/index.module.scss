@@ -1,0 +1,10 @@
+.emptyRow {
+  display: flex;
+  column-gap: 5px;
+  margin-bottom: 5px;
+}
+
+.emptyRow__tileWrapper {
+  width: 52px;
+  height: 52px;
+}
