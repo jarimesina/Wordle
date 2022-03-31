@@ -6,7 +6,7 @@ import Keyboard from '../components/Keyboard'
 import { State } from '../components/Tile'
 import TileBoard from '../components/TileBoard'
 import { WORDS } from '../constants/wordsList'
-import styles from './index.module.scss';
+import styles from './home.module.scss';
 
 export const answer = "story";
 
@@ -17,20 +17,21 @@ const Home: NextPage = () => {
   // const [guessedWords, setGuessedWords] = useState<string[]>([]);
   const [guessedWords, setGuessedWords] = useState<{character: string; state: State; isRevealing: boolean; isShake: boolean;}[]>([]);
   const [word, setWord] = useState<string>('');
-  const [pressCount, setPressCount] = useState(0);
   const [guessCount, setGuessCount] = useState(0);
   const [isShake, setIsShake] = useState(false);
 
   const clearIsShake = () => {
     setIsShake(false);
   };
+  // solution: to solve the issue of tiles scaling when the word is wrong, then what you can do is
+  // separate the animation css and character present css and create a javascript listener
+  // to massage the animation to shake and remove it after 350 ms when user inputs a character
 
   const handleKeyPress = (character: string) => {
-    if(pressCount<=4){
+    if(word.length<=4){
       setWord(prev => prev + character);
       // setGuessedWords(prev => prev + character);
       setGuessedWords(prev => [...prev, { character: character, state: 'default', isRevealing: false, isShake: false}]);
-      setPressCount(prev => prev + 1);
 
       return;
     }
@@ -38,13 +39,8 @@ const Home: NextPage = () => {
 
   const handleDelete = () => {
     setWord(prev => prev ? prev.slice(0, -1) : prev);
-
-    if(pressCount>0){
+    if(word.length> 0){
       setGuessedWords(prev => prev ? prev.slice(0, -1) : prev);
-    }
-
-    if(word){
-      setPressCount(prev => prev - 1);
     }
   }
 
@@ -53,7 +49,7 @@ const Home: NextPage = () => {
     // TODO: if guess count is 6 then user can't do anything and must press another button to restart the game
 
     // setGuessedWords(prev => [...prev, word]);
-    if(!WORDS.includes(word.toLowerCase()) || word.length < 5){
+    if(!WORDS.includes(word.toLowerCase()) || word.length < 5 || answer !== word.toLowerCase()){
       setIsShake(true);
       alert('wrong word');
       setTimeout(() => {
@@ -65,24 +61,19 @@ const Home: NextPage = () => {
     flipTiles();
 
     setGuessCount(prev => prev + 1);
-    if(answer !== word.toLowerCase()){
-      setPressCount(0);
-      setWord('');
-      return;
-    }
 
     // TODO: add kanye west quotes from api
     // TODO: create alerts
     // TODO: make keys accept color change
-    // TODO: add keyboard interaction
+    // TODO: add keyboard interaction - done
     alert("you guessed the answer!");
   }
 
   useEffect(() => {
-    console.log('pressCount', pressCount);
     console.log('word', word);
     console.log('guessCount', guessCount);
-  }, [word, pressCount, guessCount]);
+  }, [
+    word, guessCount]);
 
   useEffect(() => {
     console.log('guessedWords', guessedWords);
@@ -113,6 +104,29 @@ const Home: NextPage = () => {
       guessedWords[guessCount*5 + i].state = determineStatus(guessedWords[guessCount*5 + i].character.toLowerCase(), guessCount*5 + i);
     }
   },[guessedWords]);
+
+
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      if(event.key === "Enter"){
+        handleEnter();
+      }
+
+      if(event.key === "Backspace"){
+        handleDelete();
+      }
+
+      if (/^[A-Za-z]$/.test(event.key)) {
+        handleKeyPress(event.key);
+      }
+
+      return;
+    }
+    document.addEventListener('keyup', listener);
+    return () => {
+      document.removeEventListener('keyup', listener);
+    };
+  }, [handleEnter, handleDelete, handleKeyPress]);
 
   return (
     <div className={styles.home}>
