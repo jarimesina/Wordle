@@ -18,7 +18,7 @@ export const answer = "story";
 // TODO: add dance animation when user gets the answer correct- done
 
 const Home: NextPage = () => {
-  // eslint --fix && prettier --write \"src/**/*.{ts,tsx}\" && stylelint 
+  // eslint --fix && prettier --write \"src/**/*.{ts,tsx}\" 
   // possible idea: setGuessedWords would be an array of objects { character: 'A', status: 'correct' }
   // idea is to store words in a big array or in one string e.g. ['s','t','y','l','e','p','a','p','e','r','o','t','t','e','r']
   // const [guessedWords, setGuessedWords] = useState<string[]>([]);
