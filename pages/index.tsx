@@ -1,7 +1,5 @@
 import type { NextPage } from 'next'
-import { useCallback, useEffect, useState } from 'react'
-// import Head from 'next/head'
-// import Image from 'next/image'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Keyboard from '../components/Keyboard'
 import { State } from '../components/Tile'
 import TileBoard from '../components/TileBoard'
@@ -10,15 +8,25 @@ import styles from './home.module.scss';
 
 export const answer = "story";
 
-const Home: NextPage = () => {
+// TODO: add kanye west quotes from api
+// TODO: create better alerts
+// TODO: create dark mode and add navbar
+// OPTIONAL: add hard mode
+// TODO: if guess count is 6 then user can't do anything and must press another button to restart the game
+// TODO: make keys accept color change - done
+// TODO: add keyboard interaction - done
+// TODO: add dance animation when user gets the answer correct- done
 
+const Home: NextPage = () => {
+  // eslint --fix && prettier --write \"src/**/*.{ts,tsx}\" && stylelint 
   // possible idea: setGuessedWords would be an array of objects { character: 'A', status: 'correct' }
   // idea is to store words in a big array or in one string e.g. ['s','t','y','l','e','p','a','p','e','r','o','t','t','e','r']
   // const [guessedWords, setGuessedWords] = useState<string[]>([]);
-  const [guessedWords, setGuessedWords] = useState<{character: string; state: State; isRevealing: boolean; isShake: boolean;}[]>([]);
+  const [guessedWords, setGuessedWords] = useState<{character: string; state: State; isRevealing: boolean; isShake: boolean; isScale: boolean; isDance: boolean;}[]>([]);
   const [word, setWord] = useState<string>('');
   const [guessCount, setGuessCount] = useState(0);
   const [isShake, setIsShake] = useState(false);
+  const [isDance, setIsDance] = useState(false);
 
   const clearIsShake = () => {
     setIsShake(false);
@@ -30,9 +38,7 @@ const Home: NextPage = () => {
   const handleKeyPress = (character: string) => {
     if(word.length<=4){
       setWord(prev => prev + character);
-      // setGuessedWords(prev => prev + character);
-      setGuessedWords(prev => [...prev, { character: character, state: 'default', isRevealing: false, isShake: false}]);
-
+      setGuessedWords(prev => [...prev, { character: character, state: 'default', isRevealing: false, isShake: false, isScale:true, isDance: false}]);
       return;
     }
   }
@@ -46,27 +52,29 @@ const Home: NextPage = () => {
 
   const handleEnter = () => {
     if(guessCount===5) return;
-    // TODO: if guess count is 6 then user can't do anything and must press another button to restart the game
-
     // setGuessedWords(prev => [...prev, word]);
-    if(!WORDS.includes(word.toLowerCase()) || word.length < 5 || answer !== word.toLowerCase()){
+    if(!WORDS.includes(word.toLowerCase()) || word.length < 5){
       setIsShake(true);
-      alert('wrong word');
+      alert('word does not exist or word is not enough');
       setTimeout(() => {
         clearIsShake();
-      }, 250)
+      }, 250);
 
       return;
     }
     flipTiles();
-
     setGuessCount(prev => prev + 1);
 
-    // TODO: add kanye west quotes from api
-    // TODO: create alerts
-    // TODO: make keys accept color change
-    // TODO: add keyboard interaction - done
+    if(answer !== word.toLowerCase()){
+      console.log("2");
+      alert('wrong word');
+      setWord(prev => "");
+      return;
+    }
+    danceTiles();
+
     alert("you guessed the answer!");
+    // add code to restart game
   }
 
   useEffect(() => {
@@ -80,10 +88,6 @@ const Home: NextPage = () => {
   }, [guessedWords]);
 
   const determineStatus = (item: string, index: number) => {
-
-    // if(item !== ''){
-    //   return 'default';
-    // }
     if (item === answer[index - (guessCount*5)]) {
       return 'correct';
     }
@@ -94,17 +98,29 @@ const Home: NextPage = () => {
       return 'absent';
     }
 
-    return 'correct';
+    return 'default';
   }
 
   // this method will set the status on the active row which will cause the tile to flip and change color
   const flipTiles = useCallback(() => {
+    console.log("1");
     for (let i = 0; i < 5; i++) {
       guessedWords[guessCount*5 + i].isRevealing = true;
       guessedWords[guessCount*5 + i].state = determineStatus(guessedWords[guessCount*5 + i].character.toLowerCase(), guessCount*5 + i);
     }
   },[guessedWords]);
 
+  // const danceTiles = useCallback(() => {
+  //   for (let i = 0; i < 5; i++) {
+  //     guessedWords[guessCount*5 + i].isDance = true;
+  //   }
+  // },[guessedWords]);
+
+  const danceTiles = () => {
+    setTimeout(() => {
+      setIsDance(true);
+    }, 2500);
+  }
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
@@ -122,18 +138,29 @@ const Home: NextPage = () => {
 
       return;
     }
-    document.addEventListener('keyup', listener);
+    document.addEventListener('keydown', listener);
     return () => {
-      document.removeEventListener('keyup', listener);
+      document.removeEventListener('keydown', listener);
     };
   }, [handleEnter, handleDelete, handleKeyPress]);
 
+  const animation = useMemo(() => {
+    if(isShake){
+      return 'shake';
+    }
+
+    if (isDance) {
+      return 'dance'
+    }
+  }, [isShake, isDance]);
+
   return (
     <div className={styles.home}>
+      {/* TODO: remove this */}
       <div style={{ width: 299}}>
-        <TileBoard isShake={isShake} guessCount={guessCount} words={guessedWords} answer={answer} word={word}/>
+        <TileBoard animation={animation} guessCount={guessCount} words={guessedWords} answer={answer} word={word}/>
       </div>
-      <Keyboard handleEnter={handleEnter} handleKeyPress={handleKeyPress} handleDelete={handleDelete}/>
+      <Keyboard guessedWords={guessedWords} handleEnter={handleEnter} handleKeyPress={handleKeyPress} handleDelete={handleDelete}/>
     </div>
   );
 }

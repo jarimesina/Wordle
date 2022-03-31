@@ -1,8 +1,11 @@
 import styles from './index.module.scss';
 import Image, { ImageProps } from 'next/image';
 import { BackSpace } from '../../assets/images';
+import { State } from '../Tile';
+import clsx from 'clsx';
 
 interface Props {
+  status?: State;
   character?: string;
   svg?: ImageProps['src'];
   handleKeyPress?: (val: string) => void;
@@ -11,11 +14,11 @@ interface Props {
   [otherProp: string]: any;
 }
 
-const Key = ({ character, svg, handleEnter, handleKeyPress, handleDelete, ...otherProps }: Props) => {
+const Key = ({ status="default", character, svg, handleEnter, handleKeyPress, handleDelete, ...otherProps }: Props) => {
 
   // TODO: make this accept children
   return (
-    <button className={styles.key} {...otherProps} onClick={() => {
+    <button className={clsx(styles.key, styles[`mod__${status}`])} {...otherProps} onClick={() => {
       if(handleKeyPress && character){
         handleKeyPress(character)
       }

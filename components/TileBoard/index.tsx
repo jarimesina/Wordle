@@ -6,25 +6,23 @@ import Tile, { State } from "../Tile";
 import styles from './index.module.scss';
 
 interface Props {
+  animation: 'shake' | 'dance' | void;
   // words?: string;
   word: string;
-  words: { character: string; state: State; isRevealing: boolean; isShake: boolean;}[];
+  words: { character: string; state: State; isRevealing: boolean; isShake: boolean; isScale: boolean; isDance: boolean;}[];
   // words: string[];
   answer: string;
   guessCount: number;
-  isShake: boolean;
+  // isShake: boolean;
 }
 
-const TileBoard = ({word,isShake, words, answer, guessCount}:Props) => {
+const TileBoard = ({animation, word,
+  words, answer, guessCount}:Props) => {
   const n = 30;
   // const empties =
   //   words.length < 5
   //     ? Array.from(Array(5 - words.length))
   //     : []
-
-  // useEffect(() => {
-  //   console.log('i was triggered');
-  // }, [words, word]);
 
   const determineRow = (index: number) => {
     if(index > 0 && index<5){
@@ -50,27 +48,18 @@ const TileBoard = ({word,isShake, words, answer, guessCount}:Props) => {
   };
 
   return (
-    // <>
-    //   <CompletedRow word={word}/>
-
-    //   {words.length < 5 && (
-    //     <CurrentRow guess={word} />
-    //   )}
-
-    //   {empties.map((_, index) => (
-    //     <EmptyRow key={index} />
-    //   ))}
-    // </>
-
     <div
       className={styles.tileBoard}>
       {
         [...Array(n)].map((_, index) => {
             return (
               <Tile
-                isShake={determineRow(index) === guessCount && isShake }
+                isShake={determineRow(index) === guessCount && animation === 'shake'}
+                // isDance={words ? words?.[index]?.isDance : false}
+                isDance={determineRow(index) === guessCount-1 && animation === 'dance' }
                 isRevealing={words ? words?.[index]?.isRevealing : false}
-                key={`${words?.[index]?.character}-${words?.[index]?.isShake}-${index}`}
+                isScale={words?.[index]?.isScale}
+                key={`${words?.[index]?.character}-${index}`}
                 state={words ? words?.[index]?.state : 'default'} 
                 character={words ? words?.[index]?.character : ''}
                 index={index}

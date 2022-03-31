@@ -8,27 +8,34 @@ interface Props {
   character?: string | void;
   isRevealing?: boolean;
   isShake: boolean;
+  isDance?: boolean;
   row: number;
   [otherProp: string]: any;
-  // rowClass: string;
 }
 
-const Tile = ({ rowClass, character = '', row, isRevealing, isShake, index, guessCount, state = 'default', ...otherProps }: Props) => {
+const Tile = ({isDance, isScale, character = '', row, isRevealing, isShake, index, guessCount, state = 'default', ...otherProps }: Props) => {
   const position = index-(row*5);
 
   return (
     <div className={clsx(
         styles.tile,
-        styles[`mod__${state}`],
-        isRevealing && styles.mod__tileReveal,
-        styles[`${state}`],
-        isShake ? styles.mod__tileShake : character && styles.mod__characterAdd
+        isShake && styles.mod__tileShake,
+        isDance && styles.mod__tileDance,
       )}
-      style={{ animationDelay: isRevealing ? `${position * 350}ms`: '0ms' }} 
+      style={{ animationDelay: isDance ? `${position * 150}ms`: '0ms' }} 
       {...otherProps}
     >
-      <div style={{ animationDelay: isRevealing ? `${position * 350}ms`: '0ms' }}>
-        {character}
+      <div className={clsx(styles.tile__inner, 
+          styles[`mod__${state}`],
+          isRevealing && styles.mod__tileReveal,
+          styles[`${state}`],
+          isScale && styles.mod__tileCharacterAdd,
+          character && styles.mod__hasValue,
+        )}
+        style={{ animationDelay: isRevealing ? `${position * 350}ms`: '0ms' }}>
+        <div style={{ animationDelay: isRevealing ? `${position * 350}ms`: '0ms' }}>
+          {character}
+        </div>
       </div>
     </div>
   );
