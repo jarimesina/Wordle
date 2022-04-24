@@ -1,12 +1,12 @@
-import type { NextPage } from 'next'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import Keyboard from '../components/Keyboard'
-import { State } from '../components/Tile'
-import TileBoard from '../components/TileBoard'
-import { WORDS } from '../constants/wordsList'
+import type { NextPage } from 'next';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Keyboard from '../components/Keyboard';
+import { State } from '../components/Tile';
+import TileBoard from '../components/TileBoard';
+import { WORDS } from '../constants/wordsList';
 import styles from './home.module.scss';
 
-export const answer = "story";
+export const answer = 'story';
 
 // TODO: add kanye west quotes from api
 // TODO: create better alerts
@@ -18,11 +18,20 @@ export const answer = "story";
 // TODO: add dance animation when user gets the answer correct- done
 
 const Home: NextPage = () => {
-  // eslint --fix && prettier --write \"src/**/*.{ts,tsx}\" 
+  // eslint --fix && prettier --write \"src/**/*.{ts,tsx}\"
   // possible idea: setGuessedWords would be an array of objects { character: 'A', status: 'correct' }
   // idea is to store words in a big array or in one string e.g. ['s','t','y','l','e','p','a','p','e','r','o','t','t','e','r']
   // const [guessedWords, setGuessedWords] = useState<string[]>([]);
-  const [guessedWords, setGuessedWords] = useState<{character: string; state: State; isRevealing: boolean; isShake: boolean; isScale: boolean; isDance: boolean;}[]>([]);
+  const [guessedWords, setGuessedWords] = useState<
+    {
+      character: string;
+      state: State;
+      isRevealing: boolean;
+      isShake: boolean;
+      isScale: boolean;
+      isDance: boolean;
+    }[]
+  >([]);
   const [word, setWord] = useState<string>('');
   const [guessCount, setGuessCount] = useState(0);
   const [isShake, setIsShake] = useState(false);
@@ -36,24 +45,34 @@ const Home: NextPage = () => {
   // to massage the animation to shake and remove it after 350 ms when user inputs a character
 
   const handleKeyPress = (character: string) => {
-    if(word.length<=4){
-      setWord(prev => prev + character);
-      setGuessedWords(prev => [...prev, { character: character, state: 'default', isRevealing: false, isShake: false, isScale:true, isDance: false}]);
+    if (word.length <= 4) {
+      setWord((prev) => prev + character);
+      setGuessedWords((prev) => [
+        ...prev,
+        {
+          character: character,
+          state: 'default',
+          isRevealing: false,
+          isShake: false,
+          isScale: true,
+          isDance: false,
+        },
+      ]);
       return;
     }
-  }
+  };
 
   const handleDelete = () => {
-    setWord(prev => prev ? prev.slice(0, -1) : prev);
-    if(word.length> 0){
-      setGuessedWords(prev => prev ? prev.slice(0, -1) : prev);
+    setWord((prev) => (prev ? prev.slice(0, -1) : prev));
+    if (word.length > 0) {
+      setGuessedWords((prev) => (prev ? prev.slice(0, -1) : prev));
     }
-  }
+  };
 
   const handleEnter = () => {
-    if(guessCount===5) return;
+    if (guessCount === 5) return;
     // setGuessedWords(prev => [...prev, word]);
-    if(!WORDS.includes(word.toLowerCase()) || word.length < 5){
+    if (!WORDS.includes(word.toLowerCase()) || word.length < 5) {
       setIsShake(true);
       alert('word does not exist or word is not enough');
       setTimeout(() => {
@@ -63,32 +82,31 @@ const Home: NextPage = () => {
       return;
     }
     flipTiles();
-    setGuessCount(prev => prev + 1);
+    setGuessCount((prev) => prev + 1);
 
-    if(answer !== word.toLowerCase()){
-      console.log("2");
+    if (answer !== word.toLowerCase()) {
+      console.log('2');
       alert('wrong word');
-      setWord(prev => "");
+      setWord((prev) => '');
       return;
     }
     danceTiles();
 
-    alert("you guessed the answer!");
+    alert('you guessed the answer!');
     // add code to restart game
-  }
+  };
 
   useEffect(() => {
     console.log('word', word);
     console.log('guessCount', guessCount);
-  }, [
-    word, guessCount]);
+  }, [word, guessCount]);
 
   useEffect(() => {
     console.log('guessedWords', guessedWords);
   }, [guessedWords]);
 
   const determineStatus = (item: string, index: number) => {
-    if (item === answer[index - (guessCount*5)]) {
+    if (item === answer[index - guessCount * 5]) {
       return 'correct';
     }
     if (answer.includes(item)) {
@@ -99,16 +117,19 @@ const Home: NextPage = () => {
     }
 
     return 'default';
-  }
+  };
 
   // this method will set the status on the active row which will cause the tile to flip and change color
   const flipTiles = useCallback(() => {
-    console.log("1");
+    console.log('1');
     for (let i = 0; i < 5; i++) {
-      guessedWords[guessCount*5 + i].isRevealing = true;
-      guessedWords[guessCount*5 + i].state = determineStatus(guessedWords[guessCount*5 + i].character.toLowerCase(), guessCount*5 + i);
+      guessedWords[guessCount * 5 + i].isRevealing = true;
+      guessedWords[guessCount * 5 + i].state = determineStatus(
+        guessedWords[guessCount * 5 + i].character.toLowerCase(),
+        guessCount * 5 + i,
+      );
     }
-  },[guessedWords]);
+  }, [guessedWords]);
 
   // const danceTiles = useCallback(() => {
   //   for (let i = 0; i < 5; i++) {
@@ -120,15 +141,15 @@ const Home: NextPage = () => {
     setTimeout(() => {
       setIsDance(true);
     }, 2500);
-  }
+  };
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
-      if(event.key === "Enter"){
+      if (event.key === 'Enter') {
         handleEnter();
       }
 
-      if(event.key === "Backspace"){
+      if (event.key === 'Backspace') {
         handleDelete();
       }
 
@@ -137,7 +158,7 @@ const Home: NextPage = () => {
       }
 
       return;
-    }
+    };
     document.addEventListener('keydown', listener);
     return () => {
       document.removeEventListener('keydown', listener);
@@ -145,24 +166,35 @@ const Home: NextPage = () => {
   }, [handleEnter, handleDelete, handleKeyPress]);
 
   const animation = useMemo(() => {
-    if(isShake){
+    if (isShake) {
       return 'shake';
     }
 
     if (isDance) {
-      return 'dance'
+      return 'dance';
     }
   }, [isShake, isDance]);
 
   return (
     <div className={styles.home}>
       {/* TODO: remove this */}
-      <div style={{ width: 299}}>
-        <TileBoard animation={animation} guessCount={guessCount} words={guessedWords} answer={answer} word={word}/>
+      <div style={{ width: 299 }}>
+        <TileBoard
+          animation={animation}
+          guessCount={guessCount}
+          words={guessedWords}
+          answer={answer}
+          word={word}
+        />
       </div>
-      <Keyboard guessedWords={guessedWords} handleEnter={handleEnter} handleKeyPress={handleKeyPress} handleDelete={handleDelete}/>
+      <Keyboard
+        guessedWords={guessedWords}
+        handleEnter={handleEnter}
+        handleKeyPress={handleKeyPress}
+        handleDelete={handleDelete}
+      />
     </div>
   );
-}
+};
 
-export default Home
+export default Home;
