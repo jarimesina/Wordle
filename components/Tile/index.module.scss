@@ -1,34 +1,58 @@
 .tile {
   width: 100%;
   // height: 52px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
   font-size: 2rem;
   line-height: 2rem;
   font-weight: bold;
   vertical-align: middle;
   box-sizing: border-box;
-  color: var(--tile-text-color);
+  color: black;
   text-transform: uppercase;
   user-select: none;
 
-  background: white;
-  border: 2px solid #d3d6da;
-
-  &.mod__default {
-    color: black;
-  }
-
   &.mod__tileShake {
-    animation: jiggle linear;
+    animation: shake linear;
     animation-duration: 250ms;
   }
 
-  &.mod__characterAdd {
+  &.mod__tileDance {
+    animation: dance linear;
+    animation-duration: 250ms;
+  }
+}
+
+.tile__inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px solid #d3d6da;
+
+  &.mod__hasValue {
     border: 2px solid #878a8c;
+  }
+
+  &.mod__tileCharacterAdd {
     animation: onTypeCell linear;
     animation-duration: 0.2s;
+  }
+
+  // &.mod__hasValue {
+  //   border: 2px solid #878a8c;
+  // }
+
+  // &.mod__tileCharacterAdd {
+  //   animation: onTypeCell linear;
+  //   animation-duration: 0.2s;
+  // }
+
+  &.mod__default {
+    color: black;
   }
 
   &.mod__present {
@@ -151,7 +175,7 @@
   }
 }
 
-@keyframes jiggle {
+@keyframes shake {
   0% {
     transform: translate(0, 0);
   }
@@ -175,5 +199,27 @@
   }
   100% {
     transform: rotateX(180deg);
+  }
+}
+
+@keyframes dance {
+  20% {
+    transform: translateY(-50%);
+  }
+
+  40% {
+    transform: translateY(-25%);
+  }
+
+  60% {
+    transform: translateY(2.5%);
+  }
+
+  80% {
+    transform: translateY(-5%);
+  }
+
+  100% {
+    transform: translateY(0%);
   }
 }
